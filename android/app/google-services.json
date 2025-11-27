@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "387393948144",
+    "project_id": "planejamento-casamento",
+    "storage_bucket": "planejamento-casamento.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:387393948144:android:95e63e86288f517ccb7535",
+        "android_client_info": {
+          "package_name": "com.example.planejamento_casamento"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1n6C48vXgOZmdQZPA0-8_qXa-ppp49FM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
