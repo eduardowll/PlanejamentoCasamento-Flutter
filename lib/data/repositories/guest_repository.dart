@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ... imports ...
+
 import '../models/guest_model.dart';
 import '../services/guest_service.dart';
 
@@ -7,7 +8,6 @@ class GuestRepository {
 
   GuestRepository(this._service);
 
-  // Transforma Stream<QuerySnapshot> (bruto) em Stream<List<GuestModel>> (limpo)
   Stream<List<GuestModel>> getGuests() {
     return _service.getGuestsStream().map((snapshot) {
       return snapshot.docs.map((doc) {
@@ -16,8 +16,14 @@ class GuestRepository {
     });
   }
 
-  Future<void> addNewGuest(String name) async {
-    final newGuest = GuestModel(id: '', name: name); // ID é gerado pelo Fire
+  // --- ATUALIZADO: Recebe mais dados ---
+  Future<void> addNewGuest(String name, int companions, bool isConfirmed) async {
+    final newGuest = GuestModel(
+        id: '',
+        name: name,
+        companions: companions,
+        isConfirmed: isConfirmed
+    );
     await _service.addGuest(newGuest.toMap());
   }
 

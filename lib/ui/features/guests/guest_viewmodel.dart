@@ -11,11 +11,10 @@ class GuestViewModel extends ChangeNotifier {
   bool _isLoading = true;
   bool get isLoading => _isLoading;
 
-  // --- NOVOS GETTERS PARA OS CARDS DE ESTATÍSTICA ---
-  int get totalGuests => _guests.length;
-  int get confirmedGuests => _guests.where((g) => g.isConfirmed).length;
-  int get pendingGuests => _guests.where((g) => !g.isConfirmed).length;
-  // --------------------------------------------------
+  // Getters para os Cards do Topo
+  int get totalGuests => _guests.fold(0, (sum, g) => sum + 1 + g.companions);
+  int get confirmedGuests => _guests.where((g) => g.isConfirmed).fold(0, (sum, g) => sum + 1 + g.companions);
+  int get pendingGuests => _guests.where((g) => !g.isConfirmed).fold(0, (sum, g) => sum + 1 + g.companions);
 
   GuestViewModel(this._repository) {
     _startListening();
@@ -29,8 +28,11 @@ class GuestViewModel extends ChangeNotifier {
     });
   }
 
-  Future<void> addGuest(String name) async {
-    if (name.isNotEmpty) await _repository.addNewGuest(name);
+  // A função que recebe os 3 parâmetros
+  Future<void> addGuest(String name, int companions, bool isConfirmed) async {
+    if (name.isNotEmpty) {
+      await _repository.addNewGuest(name, companions, isConfirmed);
+    }
   }
 
   Future<void> toggleConfirmation(GuestModel guest) async {

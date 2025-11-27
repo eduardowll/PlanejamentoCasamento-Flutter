@@ -1,27 +1,39 @@
 import 'package:flutter/material.dart';
 import '../../../data/models/expense_model.dart';
+import '../../../data/repositories/budget_repository.dart';
 
 class BudgetViewModel extends ChangeNotifier {
-  // Lista Mockada (Simulando o Banco de Dados)
-  final List<ExpenseModel> _expenses = [
-    ExpenseModel(id: '1', category: 'Buffet', spent: 18500, totalBudget: 20000, iconName: 'restaurant'),
-    ExpenseModel(id: '2', category: 'Decoração & Flores', spent: 7000, totalBudget: 8000, iconName: 'celebration'),
-    ExpenseModel(id: '3', category: 'Música & Entretenimento', spent: 5000, totalBudget: 5000, iconName: 'music_note'),
-    ExpenseModel(id: '4', category: 'Fotografia & Vídeo', spent: 2000, totalBudget: 4000, iconName: 'photo_camera'),
-    ExpenseModel(id: '5', category: 'Vestuário', spent: 0, totalBudget: 3000, iconName: 'checkroom'),
-  ];
+  final BudgetRepository _repository;
 
+  List<ExpenseModel> _expenses = [];
   List<ExpenseModel> get expenses => _expenses;
 
-  // Cálculos Gerais
-  double get totalBudget => _expenses.fold(0, (sum, item) => sum + item.totalBudget);
+  final double HARD_BUDGET_LIMIT = 50000; // Meta fixa para MVP
+
+  // Construtor recebe o Repositório (Injeção)
+  BudgetViewModel(this._repository) {
+    _listenToExpenses();
+  }
+
+  void _listenToExpenses() {
+    _repository.getExpenses().listen((data) {
+      _expenses = data;
+      notifyListeners();
+    });
+  }
+
+  // Cálculos
+  double get totalBudget => HARD_BUDGET_LIMIT;
   double get totalSpent => _expenses.fold(0, (sum, item) => sum + item.spent);
   double get remaining => totalBudget - totalSpent;
   double get overallProgress => totalBudget == 0 ? 0 : (totalSpent / totalBudget);
 
-  // Função para adicionar gasto (Mock)
-  void addExpenseMock(String category, double amount) {
-    // Aqui no futuro chamaremos o Repository
-    notifyListeners();
+  // Ações
+  Future<void> addExpense(String title, String category, double amount, bool isPaid) async {
+    await _repository.addExpense(title, category, amount, isPaid);
+  }
+
+  Future<void> deleteExpense(String id) async {
+    await _repository.deleteExpense(id);
   }
 }

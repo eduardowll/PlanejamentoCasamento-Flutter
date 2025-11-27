@@ -1,51 +1,26 @@
 import 'package:flutter/material.dart';
 import '../../../data/models/task_model.dart';
+import '../../../data/repositories/task_repository.dart';
 
 class TaskViewModel extends ChangeNotifier {
-  // Dados Mockados com datas dinâmicas para teste
-  final List<TaskModel> _tasks = [
-    // --- 12-9 Meses (Prazos longos) ---
-    TaskModel(
-      id: '1',
-      period: '12-9 Meses Antes',
-      title: 'Definir orçamento',
-      isCompleted: true,
-      deadline: DateTime.now().add(const Duration(days: 200)), // Faltam 200 dias
-    ),
-    TaskModel(
-      id: '2',
-      period: '12-9 Meses Antes',
-      title: 'Montar lista de convidados',
-      isCompleted: false,
-      deadline: DateTime.now().add(const Duration(days: 5)), // URGENTE: Faltam 5 dias
-    ),
+  final TaskRepository _repository;
 
-    // --- 8-6 Meses ---
-    TaskModel(
-      id: '5',
-      period: '8-6 Meses Antes',
-      title: 'Contratar fotógrafo',
-      isCompleted: false,
-      deadline: DateTime.now().subtract(const Duration(days: 2)), // ATRASADO: -2 dias
-    ),
-    TaskModel(
-      id: '6',
-      period: '8-6 Meses Antes',
-      title: 'Contratar buffet',
-      isCompleted: true,
-      deadline: DateTime.now().add(const Duration(days: 45)),
-    ),
+  List<TaskModel> _tasks = [];
+  bool isLoading = true;
 
-    // --- 5-4 Meses ---
-    TaskModel(
-      id: '8',
-      period: '5-4 Meses Antes',
-      title: 'Enviar Save the Date',
-      isCompleted: false,
-      deadline: DateTime.now().add(const Duration(days: 15)), // Atenção: 15 dias
-    ),
-  ];
+  TaskViewModel(this._repository) {
+    _init();
+  }
 
+  void _init() {
+    _repository.getTasks().listen((data) {
+      _tasks = data;
+      isLoading = false;
+      notifyListeners();
+    });
+  }
+
+  // Agrupa tarefas por Período
   Map<String, List<TaskModel>> get groupedTasks {
     Map<String, List<TaskModel>> groups = {};
     for (var task in _tasks) {
@@ -57,11 +32,12 @@ class TaskViewModel extends ChangeNotifier {
     return groups;
   }
 
-  void toggleTask(String id) {
-    final index = _tasks.indexWhere((t) => t.id == id);
-    if (index != -1) {
-      _tasks[index].isCompleted = !_tasks[index].isCompleted;
-      notifyListeners();
-    }
+  Future<void> toggleTask(String id) async {
+    final task = _tasks.firstWhere((t) => t.id == id);
+    await _repository.toggleTask(id, task.isCompleted);
+  }
+
+  Future<void> addTask(String title, DateTime date, String period) async {
+    await _repository.addNewTask(title, date, period);
   }
 }
