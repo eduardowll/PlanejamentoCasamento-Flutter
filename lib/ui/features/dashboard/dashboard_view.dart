@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../gallery/gallery_view.dart';
 import 'dashboard_viewmodel.dart';
 import '../guests/guest_view.dart';
 import '../budget/budget_view.dart';
@@ -27,7 +28,7 @@ class _DashboardViewState extends State<DashboardView> {
     _pages = [
       const DashboardContent(), // Home
       const TaskView(),         // Tarefas
-      const Center(child: Text("Agenda (Em breve)")), // Agenda
+      const GalleryView(), // Galeria
       const GuestView(),        // Convidados
     ];
   }
@@ -50,7 +51,7 @@ class _DashboardViewState extends State<DashboardView> {
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
             BottomNavigationBarItem(icon: Icon(Icons.checklist), label: 'Tarefas'),
-            BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Agenda'),
+            BottomNavigationBarItem(icon: Icon(Icons.photo_library), label: 'Galeria'),
             BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Convidados'),
           ],
         ),
