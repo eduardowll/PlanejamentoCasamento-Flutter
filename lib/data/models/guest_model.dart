@@ -2,13 +2,13 @@ class GuestModel {
   final String id;
   final String name;
   final bool isConfirmed;
-  final int companions; // <--- NOVO CAMPO
+  final int companions;
 
   GuestModel({
     required this.id,
     required this.name,
     this.isConfirmed = false,
-    this.companions = 0, // Padrão é 0 acompanhantes
+    this.companions = 0,
   });
 
   factory GuestModel.fromMap(String id, Map<String, dynamic> map) {
@@ -16,7 +16,7 @@ class GuestModel {
       id: id,
       name: map['name'] ?? '',
       isConfirmed: map['isConfirmed'] ?? false,
-      companions: map['companions'] ?? 0, // <--- Lendo do Firebase
+      companions: map['companions'] ?? 0,
     );
   }
 
@@ -24,7 +24,7 @@ class GuestModel {
     return {
       'name': name,
       'isConfirmed': isConfirmed,
-      'companions': companions, // <--- Salvando no Firebase
+      'companions': companions,
     };
   }
 }

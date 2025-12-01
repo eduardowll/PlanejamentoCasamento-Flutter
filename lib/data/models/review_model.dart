@@ -1,7 +1,7 @@
 class ReviewModel {
   final String id;
   final String userName;
-  final String userImage; // URL da foto (usaremos placeholder)
+  final String userImage;
   final String date;
   final double rating;
   final String comment;

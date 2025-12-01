@@ -34,11 +34,24 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => VendorViewModel()),
+
         ChangeNotifierProvider(create: (_) => GuestViewModel(GuestRepository(GuestService()))),
         ChangeNotifierProvider(create: (_) => TaskViewModel(TaskRepository(TaskService()))),
-        ChangeNotifierProvider(create: (_) => DashboardViewModel(TaskRepository(TaskService()), GuestRepository(GuestService()), BudgetRepository(BudgetService()))),
-        ChangeNotifierProvider(create: (_) => VendorViewModel()),
         ChangeNotifierProvider(create: (_) => BudgetViewModel(BudgetRepository(BudgetService()))),
+
+        ChangeNotifierProxyProvider<VendorViewModel, DashboardViewModel>(
+          create: (context) => DashboardViewModel(
+            TaskRepository(TaskService()),
+            GuestRepository(GuestService()),
+            BudgetRepository(BudgetService()),
+            Provider.of<VendorViewModel>(context, listen: false),
+          ),
+          update: (context, vendorViewModel, dashboardViewModel) {
+
+            return dashboardViewModel!;
+          },
+        ),
       ],
       child: MaterialApp(
         title: 'Planejamento de Casamento',

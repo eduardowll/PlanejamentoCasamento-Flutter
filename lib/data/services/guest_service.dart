@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class GuestService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // Referência à coleção de convidados (substitua 'userId_fixo' pelo ID real do usuário depois)
   CollectionReference get _guestsRef =>
       _db.collection('users').doc('userId_fixo').collection('guests');
 

@@ -20,7 +20,6 @@ class TaskViewModel extends ChangeNotifier {
     });
   }
 
-  // Agrupa tarefas por Período
   Map<String, List<TaskModel>> get groupedTasks {
     Map<String, List<TaskModel>> groups = {};
     for (var task in _tasks) {

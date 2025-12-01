@@ -1,41 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:planejamento_casamento/ui/common/app_colors.dart';
+import 'package:planejamento_casamento/ui/common/widgets/task_card.dart';
 import 'task_viewmodel.dart';
 import '../../../data/models/task_model.dart';
-import 'add_task_view.dart'; // Importa a tela de adicionar
+import 'add_task_view.dart';
 
 class TaskView extends StatelessWidget {
   const TaskView({super.key});
 
-  final Color primaryColor = const Color(0xFF8c30e8);
-  final Color bgLight = const Color(0xFFf7f6f8);
-  final Color textDark = const Color(0xFF140e1b);
-  final Color greenColor = const Color(0xFF22c55e);
-  final Color redColor = const Color(0xFFef4444);
-  final Color orangeColor = const Color(0xFFf97316);
-
   @override
   Widget build(BuildContext context) {
-    // Scaffold direto, pois o ViewModel é injetado no main.dart
     return Scaffold(
-      backgroundColor: bgLight,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: bgLight,
+        backgroundColor: AppColors.background,
         elevation: 0,
         leading: Container(
           margin: const EdgeInsets.all(8),
           child: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new, color: textDark, size: 20),
+            icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textDark, size: 20),
             onPressed: () {
               if (Navigator.canPop(context)) Navigator.pop(context);
             },
           ),
         ),
-        title: Text("Lista de Tarefas", style: TextStyle(color: textDark, fontWeight: FontWeight.bold)),
+        title: const Text("Lista de Tarefas", style: TextStyle(color: AppColors.textDark, fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.add_circle, color: textDark),
+            icon: const Icon(Icons.add_circle, color: AppColors.textDark),
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const AddTaskView()));
             },
@@ -43,7 +37,7 @@ class TaskView extends StatelessWidget {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: Colors.grey[300], height: 1),
+          child: Container(color: AppColors.lightGrey, height: 1),
         ),
       ),
 
@@ -53,7 +47,7 @@ class TaskView extends StatelessWidget {
 
           final groups = vm.groupedTasks;
           if (groups.isEmpty) {
-            return Center(child: Text("Nenhuma tarefa encontrada.", style: TextStyle(color: textDark)));
+            return const Center(child: Text("Nenhuma tarefa encontrada.", style: TextStyle(color: AppColors.textDark)));
           }
 
           return ListView.separated(
@@ -72,12 +66,12 @@ class TaskView extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(periodName, style: TextStyle(color: textDark, fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text(periodName, style: const TextStyle(color: AppColors.textDark, fontSize: 18, fontWeight: FontWeight.bold)),
                       Row(
                         children: [
-                          Icon(Icons.task_alt, color: greenColor, size: 20),
+                          const Icon(Icons.task_alt, color: AppColors.green, size: 20),
                           const SizedBox(width: 4),
-                          Text("$completedCount/$totalCount", style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
+                          Text("$completedCount/$totalCount", style: const TextStyle(color: AppColors.textGrey, fontWeight: FontWeight.w600)),
                         ],
                       )
                     ],
@@ -88,70 +82,13 @@ class TaskView extends StatelessWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: tasks.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (context, taskIndex) => _buildTaskCard(tasks[taskIndex], vm),
+                    itemBuilder: (context, taskIndex) => TaskCard(task: tasks[taskIndex], onTap: () => vm.toggleTask(tasks[taskIndex].id)),
                   ),
                 ],
               );
             },
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildTaskCard(TaskModel task, TaskViewModel vm) {
-    Color deadlineColor;
-    String deadlineText;
-    final days = task.daysRemaining;
-
-    if (task.isCompleted) {
-      deadlineColor = greenColor;
-      deadlineText = "Concluído";
-    } else if (days < 0) {
-      deadlineColor = redColor;
-      deadlineText = "Atrasado ${days.abs()} dias";
-    } else if (days == 0) {
-      deadlineColor = orangeColor;
-      deadlineText = "Vence Hoje!";
-    } else if (days <= 7) {
-      deadlineColor = orangeColor;
-      deadlineText = "$days dias restantes";
-    } else {
-      deadlineColor = Colors.grey;
-      deadlineText = "Prazo: $days dias";
-    }
-
-    return GestureDetector(
-      onTap: () => vm.toggleTask(task.id),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey[200]!),
-        ),
-        child: Row(
-          children: [
-            Icon(task.isCompleted ? Icons.check_circle : Icons.radio_button_unchecked, color: task.isCompleted ? greenColor : Colors.grey[300], size: 28),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(task.title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: task.isCompleted ? Colors.grey : textDark, decoration: task.isCompleted ? TextDecoration.lineThrough : null)),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.calendar_today, size: 14, color: deadlineColor),
-                      const SizedBox(width: 4),
-                      Text(deadlineText, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: deadlineColor)),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

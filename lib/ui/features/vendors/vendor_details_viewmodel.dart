@@ -1,39 +1,34 @@
 import 'package:flutter/material.dart';
 import '../../../data/models/review_model.dart';
 import '../../../data/models/vendor_model.dart';
+import './vendor_viewmodel.dart';
 
 class VendorDetailsViewModel extends ChangeNotifier {
-  // Dados Mockados de Reviews (Copiados do seu HTML)
-  final List<ReviewModel> _reviews = [
-    ReviewModel(
-      id: '1',
-      userName: 'Ana L.',
-      userImage: '', // Placeholder no UI
-      date: '2 semanas atrás',
-      rating: 5.0,
-      comment: '"O lugar é incrível, superou todas as nossas expectativas! A equipe foi maravilhosa do início ao fim. Recomendo de olhos fechados!"',
-    ),
-    ReviewModel(
-      id: '2',
-      userName: 'Marcos P.',
-      userImage: '',
-      date: '1 mês atrás',
-      rating: 4.5, // Star half
-      comment: '"Atendimento impecável e o espaço é lindo. Tivemos um pequeno problema com a iluminação externa, mas foi resolvido rapidamente."',
-    ),
-    ReviewModel(
-      id: '3',
-      userName: 'Julia F.',
-      userImage: '',
-      date: '3 meses atrás',
-      rating: 5.0,
-      comment: '"Perfeito! O jardim é deslumbrante para cerimônias ao ar livre e o salão é muito elegante. Todos os convidados elogiaram muito a escolha do local."',
-    ),
-  ];
+  VendorModel _vendor;
+  final VendorViewModel _vendorViewModel;
 
-  List<ReviewModel> get reviews => _reviews;
+  VendorDetailsViewModel({
+    required VendorModel vendor,
+    required VendorViewModel vendorViewModel
+  }) : _vendor = vendor,
+        _vendorViewModel = vendorViewModel;
 
-  // Cálculo da nota média
-  double get averageRating => 4.8;
-  int get totalReviews => 128;
+  VendorModel get vendor => _vendor;
+  List<ReviewModel> get reviews => _vendor.reviews;
+  double get averageRating => _vendor.rating;
+  int get totalReviews => _vendor.reviews.length;
+
+  bool get isHired => _vendor.status == VendorStatus.hired;
+
+  void toggleHiringStatus() {
+
+    final newStatus = isHired ? VendorStatus.pending : VendorStatus.hired;
+
+    final updatedVendor = _vendor.copyWith(status: newStatus);
+
+    _vendor = updatedVendor;
+    notifyListeners();
+
+    _vendorViewModel.updateVendor(updatedVendor);
+  }
 }

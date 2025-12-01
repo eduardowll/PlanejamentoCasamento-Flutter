@@ -6,7 +6,6 @@ class TaskRepository {
 
   TaskRepository(this._service);
 
-  // Retorna lista limpa de Tarefas para o ViewModel
   Stream<List<TaskModel>> getTasks() {
     return _service.getTasksStream().map((snapshot) {
       return snapshot.docs.map((doc) => TaskModel.fromFirestore(doc)).toList();
@@ -16,12 +15,10 @@ class TaskRepository {
   Future<void> addNewTask(String title, DateTime date, String period) async {
     final newTaskMap = {
       'title': title,
-      'deadline': date, // O Service converte pra Timestamp no toMap se usarmos o model, ou direto aqui
+      'deadline': date,
       'period': period,
       'isCompleted': false,
     };
-    // No Service ajustamos pra receber map, mas podemos instanciar model aqui
-    // Simplificando:
     final model = TaskModel(
         id: '',
         title: title,

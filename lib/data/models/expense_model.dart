@@ -2,22 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ExpenseModel {
   final String id;
-  final String category; // "Buffet", "Música", etc.
-  final double spent; // Valor gasto
-  final double totalBudget; // Meta (Opcional, por enquanto vamos repetir o spent ou fixar)
-  final bool isPaid; // Novo campo: Pago ou não
-  final String title; // Novo campo: Nome da despesa (ex: "Sinal do DJ")
+  final String category;
+  final double spent;
+  final double totalBudget;
+  final bool isPaid;
+  final String title;
 
   ExpenseModel({
     required this.id,
     required this.title,
     required this.category,
     required this.spent,
-    this.totalBudget = 0, // Simplificação para o MVP
+    this.totalBudget = 0,
     this.isPaid = false,
   });
 
-  // Do Firebase para o App
   factory ExpenseModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return ExpenseModel(
@@ -29,14 +28,13 @@ class ExpenseModel {
     );
   }
 
-  // Do App para o Firebase
   Map<String, dynamic> toMap() {
     return {
       'title': title,
       'category': category,
       'amount': spent,
       'isPaid': isPaid,
-      'date': FieldValue.serverTimestamp(), // Salva a data de criação
+      'date': FieldValue.serverTimestamp(),
     };
   }
 

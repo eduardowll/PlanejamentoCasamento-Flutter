@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:planejamento_casamento/ui/common/app_colors.dart';
+import 'package:planejamento_casamento/ui/common/widgets/custom_text_field.dart';
+import 'package:planejamento_casamento/ui/common/widgets/primary_button.dart';
 import 'package:provider/provider.dart';
 import 'budget_viewmodel.dart';
 
@@ -14,16 +17,7 @@ class _AddExpenseViewState extends State<AddExpenseView> {
   final _amountController = TextEditingController();
 
   String? _selectedCategory;
-  bool _isPaid = true; // Padrão: Pago (como no HTML)
-
-  // Cores do Design
-  final Color primaryColor = const Color(0xFF8c30e8);
-  final Color bgLight = const Color(0xFFf7f6f8);
-  final Color surfaceLight = const Color(0xFFfaf8fc);
-  final Color textDark = const Color(0xFF140e1b);
-  final Color borderLight = const Color(0xFFdbd0e7);
-  final Color greenColor = const Color(0xFF22c55e);
-  final Color orangeColor = const Color(0xFFf97316);
+  bool _isPaid = true;
 
   final List<String> _categories = [
     'Buffet', 'Música', 'Decoração', 'Fotografia', 'Vestuário', 'Outros'
@@ -38,7 +32,7 @@ class _AddExpenseViewState extends State<AddExpenseView> {
 
   void _saveExpense() {
     final title = _titleController.text.trim();
-    final amountStr = _amountController.text.replaceAll(',', '.'); // Aceita vírgula
+    final amountStr = _amountController.text.replaceAll(',', '.');
     final amount = double.tryParse(amountStr);
 
     if (title.isEmpty || amount == null || _selectedCategory == null) {
@@ -61,20 +55,20 @@ class _AddExpenseViewState extends State<AddExpenseView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgLight,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: surfaceLight,
+        backgroundColor: AppColors.surfaceLighter,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.close, color: textDark),
+          icon: const Icon(Icons.close, color: AppColors.textDark),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text("Adicionar Nova Despesa",
-            style: TextStyle(color: textDark, fontWeight: FontWeight.bold)),
+        title: const Text("Adicionar Nova Despesa",
+            style: TextStyle(color: AppColors.textDark, fontWeight: FontWeight.bold)),
         centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(color: borderLight, height: 1),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, color: AppColors.border),
         ),
       ),
 
@@ -83,29 +77,22 @@ class _AddExpenseViewState extends State<AddExpenseView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 1. TÍTULO
-            _buildLabel("Título da Despesa"),
-            TextField(
+            CustomTextField(
               controller: _titleController,
-              decoration: _inputDecoration("Ex: Bolo do casamento"),
+              label: "Título da Despesa",
+              hint: "Ex: Bolo do casamento",
             ),
             const SizedBox(height: 24),
 
-            // 2. VALOR
-            _buildLabel("Valor (R\$)"),
-            TextField(
+            CustomTextField(
               controller: _amountController,
+              label: "Valor (R\$)",
+              hint: "0,00",
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: _inputDecoration("0,00").copyWith(
-                prefixIcon: const Padding(
-                  padding: EdgeInsets.all(14.0),
-                  child: Text("R\$", style: TextStyle(fontSize: 16, color: Colors.grey)),
-                ),
-              ),
+              prefixText: "R\$ ",
             ),
             const SizedBox(height: 24),
 
-            // 3. CATEGORIA
             _buildLabel("Categoria"),
             DropdownButtonFormField<String>(
               value: _selectedCategory,
@@ -115,62 +102,49 @@ class _AddExpenseViewState extends State<AddExpenseView> {
             ),
             const SizedBox(height: 24),
 
-            // 4. STATUS PAGAMENTO
             _buildLabel("Status do Pagamento"),
             Row(
               children: [
-                Expanded(child: _buildStatusButton("Pendente", false, orangeColor, Icons.hourglass_top)),
+                Expanded(child: _buildStatusButton("Pendente", false, AppColors.orange, Icons.hourglass_top)),
                 const SizedBox(width: 12),
-                Expanded(child: _buildStatusButton("Pago", true, greenColor, Icons.check_circle)),
+                Expanded(child: _buildStatusButton("Pago", true, AppColors.green, Icons.check_circle)),
               ],
             ),
           ],
         ),
       ),
 
-      // --- FOOTER ---
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: surfaceLight,
-          border: Border(top: BorderSide(color: borderLight)),
+        decoration: const BoxDecoration(
+          color: AppColors.surfaceLighter,
+          border: Border(top: BorderSide(color: AppColors.border)),
         ),
-        child: SizedBox(
-          height: 56,
-          child: ElevatedButton(
-            onPressed: _saveExpense,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: primaryColor,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              elevation: 0,
-            ),
-            child: const Text("Salvar Despesa",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-          ),
+        child: PrimaryButton(
+          label: "Salvar Despesa",
+          onPressed: _saveExpense,
         ),
       ),
     );
   }
 
-  // --- WIDGETS AUXILIARES ---
-
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Text(text, style: TextStyle(color: textDark, fontSize: 16, fontWeight: FontWeight.w500)),
+      child: Text(text, style: const TextStyle(color: AppColors.textDark, fontSize: 16, fontWeight: FontWeight.w500)),
     );
   }
 
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: Colors.grey[400]),
+      hintStyle: const TextStyle(color: AppColors.textHint),
       filled: true,
-      fillColor: surfaceLight,
+      fillColor: AppColors.surfaceLighter,
       contentPadding: const EdgeInsets.all(16),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderLight)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderLight)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: primaryColor, width: 2)),
+      border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8)), borderSide: BorderSide(color: AppColors.border)),
+      enabledBorder: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8)), borderSide: BorderSide(color: AppColors.border)),
+      focusedBorder: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8)), borderSide: BorderSide(color: AppColors.primary, width: 2)),
     );
   }
 
@@ -181,21 +155,21 @@ class _AddExpenseViewState extends State<AddExpenseView> {
       child: Container(
         height: 56,
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.1) : surfaceLight,
+          color: isSelected ? color.withOpacity(0.1) : AppColors.surfaceLighter,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-              color: isSelected ? color : borderLight,
+              color: isSelected ? color : AppColors.border,
               width: isSelected ? 2 : 1
           ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: isSelected ? color : Colors.grey),
+            Icon(icon, color: isSelected ? color : AppColors.textGrey),
             const SizedBox(width: 8),
             Text(label,
                 style: TextStyle(
-                  color: isSelected ? color : textDark,
+                  color: isSelected ? color : AppColors.textDark,
                   fontWeight: FontWeight.w600,
                 )
             ),

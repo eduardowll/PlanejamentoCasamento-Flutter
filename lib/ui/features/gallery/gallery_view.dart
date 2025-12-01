@@ -4,36 +4,31 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'gallery_viewmodel.dart';
 import '../../../data/models/gallery_item_model.dart';
+import '../../common/app_colors.dart';
 
 class GalleryView extends StatelessWidget {
   const GalleryView({super.key});
-
-  final Color primaryColor = const Color(0xFF8c30e8);
-  final Color bgLight = const Color(0xFFf7f6f8);
-  final Color textDark = const Color(0xFF140e1b);
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => GalleryViewModel(),
       child: Scaffold(
-        backgroundColor: bgLight,
-        // --- HEADER ---
+        backgroundColor: AppColors.background,
         appBar: AppBar(
-          backgroundColor: bgLight,
+          backgroundColor: AppColors.background,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: textDark),
-            // Volta se possível, senão não faz nada (pois está na home)
+            icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
             onPressed: () {
               if (Navigator.canPop(context)) Navigator.pop(context);
             },
           ),
-          title: Text("Galeria de Inspiração",
-              style: TextStyle(color: textDark, fontWeight: FontWeight.bold)),
+          title: const Text("Galeria de Inspiração",
+              style: TextStyle(color: AppColors.textDark, fontWeight: FontWeight.bold)),
           centerTitle: true,
           actions: [
-            IconButton(icon: Icon(Icons.search, color: textDark), onPressed: () {}),
+            IconButton(icon: const Icon(Icons.search, color: AppColors.textDark), onPressed: () {}),
           ],
         ),
 
@@ -41,7 +36,6 @@ class GalleryView extends StatelessWidget {
           builder: (context, vm, child) {
             return Column(
               children: [
-                // --- FILTROS (Chips) ---
                 SizedBox(
                   height: 60,
                   child: ListView(
@@ -50,6 +44,7 @@ class GalleryView extends StatelessWidget {
                     children: [
                       _buildCategoryChip(vm, "Todos"),
                       _buildCategoryChip(vm, "Vestidos"),
+                      _buildCategoryChip(vm, "Ternos"),
                       _buildCategoryChip(vm, "Decoração"),
                       _buildCategoryChip(vm, "Bolos"),
                       _buildCategoryChip(vm, "Buquês"),
@@ -63,9 +58,9 @@ class GalleryView extends StatelessWidget {
                       ? const Center(child: CircularProgressIndicator())
                       : MasonryGridView.count(
                     padding: const EdgeInsets.all(16),
-                    crossAxisCount: 2, // 2 Colunas
-                    mainAxisSpacing: 12, // Espaço Vertical
-                    crossAxisSpacing: 12, // Espaço Horizontal
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
                     itemCount: vm.items.length,
                     itemBuilder: (context, index) {
                       return _buildGalleryItem(context, vm.items[index], vm);
@@ -80,7 +75,6 @@ class GalleryView extends StatelessWidget {
     );
   }
 
-  // --- WIDGETS AUXILIARES ---
 
   Widget _buildCategoryChip(GalleryViewModel vm, String label) {
     final isSelected = vm.selectedCategory == label;
@@ -93,7 +87,7 @@ class GalleryView extends StatelessWidget {
           if (selected) vm.setCategory(label);
         },
         backgroundColor: Colors.white,
-        selectedColor: primaryColor,
+        selectedColor: AppColors.primary,
         labelStyle: TextStyle(
           color: isSelected ? Colors.white : Colors.grey[700],
           fontWeight: FontWeight.w600,
@@ -101,9 +95,10 @@ class GalleryView extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: isSelected ? primaryColor : Colors.grey[300]!,
+            color: isSelected ? AppColors.primary : Colors.grey[300]!,
           ),
         ),
+        showCheckmark: false,
       ),
     );
   }
@@ -114,7 +109,6 @@ class GalleryView extends StatelessWidget {
       children: [
         Stack(
           children: [
-            // Imagem com Cache (Não pisca ao scrolar)
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: CachedNetworkImage(
@@ -124,12 +118,15 @@ class GalleryView extends StatelessWidget {
                     color: Colors.grey[200],
                     child: const Center(child: Icon(Icons.image, color: Colors.grey))
                 ),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
+                errorWidget: (context, url, error) => Container(
+                  height: 150,
+                  color: Colors.grey[100],
+                  child: const Icon(Icons.broken_image, color: Colors.grey),
+                ),
                 fit: BoxFit.cover,
               ),
             ),
 
-            // Botão Favoritar
             Positioned(
               top: 8, right: 8,
               child: GestureDetector(
@@ -138,7 +135,7 @@ class GalleryView extends StatelessWidget {
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: item.isFavorite
-                        ? primaryColor.withOpacity(0.9)
+                        ? AppColors.primary.withOpacity(0.9)
                         : Colors.black.withOpacity(0.3),
                     shape: BoxShape.circle,
                   ),
@@ -157,10 +154,10 @@ class GalleryView extends StatelessWidget {
           padding: const EdgeInsets.only(left: 4),
           child: Text(
             item.title,
-            style: TextStyle(
+            style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: textDark
+                color: AppColors.textDark
             ),
           ),
         ),

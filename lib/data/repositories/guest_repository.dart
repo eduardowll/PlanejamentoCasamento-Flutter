@@ -16,7 +16,6 @@ class GuestRepository {
     });
   }
 
-  // --- ATUALIZADO: Recebe mais dados ---
   Future<void> addNewGuest(String name, int companions, bool isConfirmed) async {
     final newGuest = GuestModel(
         id: '',

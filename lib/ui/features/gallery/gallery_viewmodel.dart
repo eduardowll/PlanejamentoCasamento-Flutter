@@ -43,7 +43,7 @@ class GalleryViewModel extends ChangeNotifier {
     final index = _allItems.indexWhere((i) => i.id == id);
     if (index != -1) {
       _allItems[index].isFavorite = !_allItems[index].isFavorite;
-      _filterItems(); // Re-aplica filtro para atualizar a lista exibida
+      _filterItems();
       notifyListeners();
     }
   }

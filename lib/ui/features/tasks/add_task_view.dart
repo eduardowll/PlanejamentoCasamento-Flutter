@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:planejamento_casamento/ui/common/app_colors.dart';
+import 'package:planejamento_casamento/ui/common/widgets/custom_text_field.dart';
+import 'package:planejamento_casamento/ui/common/widgets/primary_button.dart';
 import 'task_viewmodel.dart';
 
 class AddTaskView extends StatefulWidget {
@@ -13,8 +16,6 @@ class _AddTaskViewState extends State<AddTaskView> {
   final _dateController = TextEditingController();
   DateTime? _selectedDate;
   String? _selectedCategory;
-  final Color primaryColor = const Color(0xFF8c30e8);
-  final Color textDark = const Color(0xFF140e1b);
 
   final List<String> _categories = [
     '12-9 Meses Antes', '8-6 Meses Antes', '5-4 Meses Antes', '3-1 Meses Antes', 'Semana do Casamento', 'Dia do Casamento'
@@ -27,7 +28,7 @@ class _AddTaskViewState extends State<AddTaskView> {
       firstDate: DateTime.now(),
       lastDate: DateTime(2030),
       builder: (context, child) {
-        return Theme(data: Theme.of(context).copyWith(colorScheme: ColorScheme.light(primary: primaryColor, onPrimary: Colors.white, onSurface: textDark)), child: child!);
+        return Theme(data: Theme.of(context).copyWith(colorScheme: const ColorScheme.light(primary: AppColors.primary, onPrimary: AppColors.surface, onSurface: AppColors.textDark)), child: child!);
       },
     );
     if (picked != null) {
@@ -50,11 +51,11 @@ class _AddTaskViewState extends State<AddTaskView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFf7f6f8),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFf7f6f8), elevation: 0,
-        leading: IconButton(icon: Icon(Icons.arrow_back, color: textDark), onPressed: () => Navigator.pop(context)),
-        title: Text("Adicionar Nova Tarefa", style: TextStyle(color: textDark, fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.background, elevation: 0,
+        leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.textDark), onPressed: () => Navigator.pop(context)),
+        title: const Text("Adicionar Nova Tarefa", style: TextStyle(color: AppColors.textDark, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -62,19 +63,19 @@ class _AddTaskViewState extends State<AddTaskView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Título da Tarefa", style: TextStyle(color: textDark, fontSize: 16, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 8),
-            TextField(controller: _titleController, decoration: _inputDec("Ex: Contratar fotógrafo")),
+            CustomTextField(controller: _titleController, label: "Título da Tarefa", hint: "Ex: Contratar fotógrafo"),
             const SizedBox(height: 24),
-            Text("Data Limite", style: TextStyle(color: textDark, fontSize: 16, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 8),
-            TextField(controller: _dateController, readOnly: true, onTap: _pickDate, decoration: _inputDec("DD/MM/AAAA").copyWith(suffixIcon: Icon(Icons.calendar_today, color: primaryColor))),
+            CustomTextField(controller: _dateController, label: "Data Limite", hint: "DD/MM/AAAA", readOnly: true, onTap: _pickDate, suffixIcon: Icons.calendar_today),
             const SizedBox(height: 24),
-            Text("Categoria", style: TextStyle(color: textDark, fontSize: 16, fontWeight: FontWeight.w500)),
+            const Text("Categoria", style: TextStyle(color: AppColors.textDark, fontSize: 16, fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               value: _selectedCategory,
-              decoration: _inputDec("Selecione"),
+              decoration: InputDecoration(
+                hintText: "Selecione", filled: true, fillColor: AppColors.surface,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.lightGrey)),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.primary, width: 2)),
+              ),
               items: _categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
               onChanged: (v) => setState(() => _selectedCategory = v),
             ),
@@ -83,16 +84,8 @@ class _AddTaskViewState extends State<AddTaskView> {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(24),
-        child: SizedBox(height: 56, child: ElevatedButton(onPressed: _saveTask, style: ElevatedButton.styleFrom(backgroundColor: primaryColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: const Text("Salvar Tarefa", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)))),
+        child: PrimaryButton(label: "Salvar Tarefa", onPressed: _saveTask),
       ),
-    );
-  }
-
-  InputDecoration _inputDec(String hint) {
-    return InputDecoration(
-      hintText: hint, filled: true, fillColor: Colors.white,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey[300]!)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: const Color(0xFF8c30e8), width: 2)),
     );
   }
 }
